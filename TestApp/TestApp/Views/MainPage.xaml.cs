@@ -17,7 +17,7 @@ namespace HelloWorld
     public partial class MainPage : ContentPage
     {
 
-        private const string Url = "https://localhost:8443/quizking/quizzes";
+        private const string Url = "https://10.0.2.2:8443/quizking/quizzes";
         private HttpClient _client = new HttpClient();
         private ObservableCollection<Post> _posts;
 
@@ -29,6 +29,13 @@ namespace HelloWorld
         protected override async void OnAppearing()
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("basic", "ZW50bW9iMjAxOF82X3VzZXI6ZW50bW9iMjAxOF82X3VzZXI=");
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+                (sender, cert, chain, sslPolicyErrors) =>
+                {
+                    if (cert != null) System.Diagnostics.Debug.WriteLine(cert);
+                    return true;
+                };
 
             var content = await _client.GetStringAsync(Url);
             var posts = JsonConvert.DeserializeObject<List<Post>>(content);

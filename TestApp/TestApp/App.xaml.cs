@@ -14,6 +14,7 @@ namespace TestApp
             InitializeComponent();
 
             MainPage = new NavigationPage(new MainPage());
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
 
         protected override void OnStart()
