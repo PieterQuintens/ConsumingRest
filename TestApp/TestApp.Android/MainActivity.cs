@@ -19,7 +19,13 @@ namespace TestApp.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
+            //ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
+            System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+                (sender, cert, chain, sslPolicyErrors) =>
+                {
+                    if (cert != null) System.Diagnostics.Debug.WriteLine(cert);
+                    return true;
+                };
             LoadApplication(new App());
         }
     }

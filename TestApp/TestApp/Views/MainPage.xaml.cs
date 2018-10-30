@@ -2,7 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Android.Net;
+using Javax.Net.Ssl;
 using Newtonsoft.Json;
+using Xamarin.Android.Net;
 using Xamarin.Forms;
 
 namespace HelloWorld
@@ -49,6 +52,27 @@ namespace HelloWorld
 
         void OnDelete(object sender, System.EventArgs e)
         {
+        }
+
+        internal class BypassHostnameVerifier : Java.Lang.Object, IHostnameVerifier
+        {
+            public bool Verify(string hostname, ISSLSession session)
+            {
+                return true;
+            }
+        }
+
+        internal class BypassSslValidationClientHandler : AndroidClientHandler
+        {
+            protected override SSLSocketFactory ConfigureCustomSSLSocketFactory(HttpsURLConnection connection)
+            {
+                return SSLCertificateSocketFactory.GetInsecure(1000, null);
+            }
+
+            protected override IHostnameVerifier GetSSLHostnameVerifier(HttpsURLConnection connection)
+            {
+                return new BypassHostnameVerifier();
+            }
         }
     }
 }
