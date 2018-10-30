@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Net;
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
@@ -19,6 +19,7 @@ namespace TestApp.Droid
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+            ServicePointManager.ServerCertificateValidationCallback += (o, certificate, chain, errors) => true;
             LoadApplication(new App());
         }
     }
