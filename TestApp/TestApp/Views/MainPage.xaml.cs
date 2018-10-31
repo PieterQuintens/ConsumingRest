@@ -2,27 +2,42 @@
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Android.Net;
-using Javax.Net.Ssl;
 using Newtonsoft.Json;
-using Xamarin.Android.Net;
 using Xamarin.Forms;
 
 namespace HelloWorld
 {
-    public class Post
+    public class Quiz
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Body { get; set; }
+        public string Name { get; set; }
+        public List<Question> Questions { get; set; }
+        public int weight { get; set; }
     }
+
+    public class Question
+    {
+        public int Id { get; set; }
+        public string Content { get; set; }
+        public List<Response> Responses { get; set; }
+        public Response  Response { get; set; }
+    }
+
+    public class Response
+    {
+        public int Id { get; set; }
+        public string Content { get; set; }
+        public bool Correct { get; set; }
+    }
+
 
     public partial class MainPage : ContentPage
     {
 
         private const string Url = "https://10.0.2.2:8443/quizking/quizzes";
+        //private const string Url = "https://jsonplaceholder.typicode.com/posts";
         private HttpClient _client = new HttpClient();
-        private ObservableCollection<Post> _posts;
+        private ObservableCollection<Quiz> _posts;
 
         public MainPage()
         {
@@ -34,9 +49,9 @@ namespace HelloWorld
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("basic", "ZW50bW9iMjAxOF82X3VzZXI6ZW50bW9iMjAxOF82X3VzZXI=");
 
             var content = await _client.GetStringAsync(Url);
-            var posts = JsonConvert.DeserializeObject<List<Post>>(content);
+            var posts = JsonConvert.DeserializeObject<List<Quiz>>(content);
 
-            _posts = new ObservableCollection<Post>(posts);
+            _posts = new ObservableCollection<Quiz>(posts);
             postsListView.ItemsSource = _posts;
 
             base.OnAppearing();
@@ -52,27 +67,6 @@ namespace HelloWorld
 
         void OnDelete(object sender, System.EventArgs e)
         {
-        }
-
-        internal class BypassHostnameVerifier : Java.Lang.Object, IHostnameVerifier
-        {
-            public bool Verify(string hostname, ISSLSession session)
-            {
-                return true;
-            }
-        }
-
-        internal class BypassSslValidationClientHandler : AndroidClientHandler
-        {
-            protected override SSLSocketFactory ConfigureCustomSSLSocketFactory(HttpsURLConnection connection)
-            {
-                return SSLCertificateSocketFactory.GetInsecure(1000, null);
-            }
-
-            protected override IHostnameVerifier GetSSLHostnameVerifier(HttpsURLConnection connection)
-            {
-                return new BypassHostnameVerifier();
-            }
         }
     }
 }
